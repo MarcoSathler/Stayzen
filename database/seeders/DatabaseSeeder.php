@@ -16,12 +16,17 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(10)->create([
+            'role' => 'seller'
+        ]);
+
+        User::factory(10)->create([
             'role' => 'customer'
         ]);
 
-        // User::factory(10)->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $this->call([
+            ServiceSeeder::class,
+            UserServiceRelationSeeder::class,
+            ServiceImageSeeder::class,
+        ]);
     }
 }
