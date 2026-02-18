@@ -1,20 +1,20 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RegisteredUserController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/register', [RegisteredUserController::class, 'index'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])
                 ->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
-    Route::get('/register', [RegisteredUserController::class, 'create'])
-                ->name('register');
-    Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
 Route::middleware('auth')->group(function () {

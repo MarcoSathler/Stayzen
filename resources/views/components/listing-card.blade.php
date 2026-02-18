@@ -1,8 +1,8 @@
 <div class="group bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 cursor-pointer border border-gray-100 hover:border-orange-200">
     <!-- Image -->
     <div class="relative h-72 overflow-hidden">
-        <img src="{{ $listing->image_url }}" alt="{{ $listing->name }}" 
-             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+        <img src="{{ $listing->serviceImage[0]->image_url ?? '' }}" alt="{{ $listing->name }}"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
         
         <!-- Superhost badge -->
         <div class="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-xs font-semibold">

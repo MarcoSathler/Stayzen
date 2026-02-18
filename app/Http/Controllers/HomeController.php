@@ -2,30 +2,35 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Services;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Models\Service;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Services::query()
-            ->latest('created_at');
-            
-        // Filtros de busca
-        if ($location = $request->get('location')) {
-            $query->where(function($q) use ($location) {
-                $q->where('name', 'LIKE', "%{$location}%")
-                  ->orWhere('description', 'LIKE', "%{$location}%");
-            });
+        try {
+            $query = Service::query()
+                    ->with(['userService', 'serviceImage'])
+                    ->latest('created_at');
+        
+            $accommodations = $query->paginate(12);
+
+            if (empty($accommodations))
+                throw new \Exception('Error on getting Accomodations');
+
+            return view('reservations.index', compact('accommodations'));
+        } catch (\Exception $ex) {
+            Log::error('Erro ao buscar serviços: ' . $ex->getMessage());
+
+            return view('errors.custom', [
+                'title' => 'Service Unavailable',
+                'message' => 'We couldn\'t load the accommodation list. Our team has been notified.',
+                'debug' => $ex->getMessage()
+            ]);
         }
         
-        if ($type = $request->get('type')) {
-            $query->where('type', $type);
-        }
-        
-        $accommodations = $query->paginate(12);
-        
-        return view('reservations.index', compact('accommodations'));
     }
 }
