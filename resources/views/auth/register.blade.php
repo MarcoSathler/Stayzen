@@ -45,6 +45,14 @@
                            class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                            placeholder="+55 (11) 99999-9999" value="{{ old('phone') }}">
                 </div>
+
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Select your account type</label>
+                    <select name="role" id="role" class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                        <option value="customer" @selected(old('role') == 'customer')>Customer</option>
+                        <option value="seller" @selected(old('role') == 'seller')>Seller</option>
+                    </select>
+                </div>
                 
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>

@@ -17,6 +17,7 @@ class StoreAuthRequest extends FormRequest
         return [
             'name' => ['required', 'string'],
             'email' => ['required', 'email'],
+            'phone' => ['nullable', 'regex:/^(\+?\d{1,3})?[\s\-\.]?\(?\d{2}\)?[\s\-\.]?\d{4,5}[\s\-\.]?\d{4}$/'],
             'password' => ['required', 'string', 'min:8'],
             'role' => ['required', Rule::in(['seller', 'customer', 'admin'])],
 

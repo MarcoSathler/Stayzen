@@ -62,9 +62,9 @@
     
     <!-- Pagination -->
     @if($accommodations->hasPages())
-    <div class="mt-20 flex justify-center">
-        {{ $accommodations->appends(request()->query())->links('pagination::tailwind') }}
-    </div>
+        <div class="mt-20 flex justify-center">
+            {{ $accommodations->appends(request()->query())->links('pagination::tailwind') }}
+        </div>
     @endif
 </section>
 @endsection
