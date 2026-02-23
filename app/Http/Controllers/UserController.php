@@ -11,14 +11,23 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\User;
 
-class RegisteredUserController extends Controller
+class UserController extends Controller
 {
-    public function index() {
+    public function index() 
+    {
         return view('auth.register');
     }
 
-    public function loginPage() {
+    public function loginPage() 
+    {
         return view('auth.login');
+    }
+
+    public function edit() 
+    {
+        $user = auth()->user();
+
+        return view('auth.profile', compact('user'));
     }
 
     public function store(StoreAuthRequest $request)
@@ -60,6 +69,34 @@ class RegisteredUserController extends Controller
             ], 400);
         }
         
+    }
+
+    public function update(StoreAuthRequest $request, User $user) 
+    {
+        try{
+            $validated = $request->validate([
+                'name' => 'required|string',
+                'email' => 'required|email',
+                'password' => 'nullable|string',
+                'role' => 'required|string'
+            ]);
+
+            if (isset($validated['password']))
+            {
+                $validated['password'] = $this->encrypt($validated['password']);
+            }
+
+            $user->update($validated);
+
+            return redirect()
+            ->back()
+            ->with('success', 'User updated!');
+
+        } catch(\Exception $ex) {
+            return redirect()
+            ->back()
+            ->with('error', 'Not possible to update the user now, try again later!');
+        }
     }
 
     public function logout(Request $request)
