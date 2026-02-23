@@ -18,7 +18,7 @@ class LoginAuthRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email:rfc'],
-            'password' => ['required', 'string', 'min:6'],
+            'password' => ['required', 'string', 'min:5'],
         ];
     }
 
