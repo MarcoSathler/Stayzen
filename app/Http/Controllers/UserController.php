@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -96,6 +97,12 @@ class UserController extends Controller
             ->with('success', 'User updated!');
 
         } catch(\Exception $ex) {
+            Log::error('Not possible to update the user now', [
+                'user_id' => auth()->id(),
+                'error' => $ex->getMessage(),
+                'trace' => $ex->getTraceAsString(),
+            ]);
+
             return redirect()
             ->back()
             ->with('error', 'Not possible to update the user now, try again later!');
