@@ -23,7 +23,9 @@
                     
                     <!-- Profile -->
                     <div class="w-10 h-10 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all">
-                        {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        <a href="{{ route('profile.edit') }}">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </a>
                     </div>
                 @else
                     <a href="{{ route('login') }}" class="text-gray-700 hover:text-gray-900 font-medium hidden sm:inline">

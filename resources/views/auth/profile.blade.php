@@ -8,22 +8,20 @@
                 <i class="fas fa-user-plus text-white text-3xl"></i>
             </div>
             <h2 class="mt-6 text-center text-3xl font-bold text-gray-900">
-                Create your account
+                Update your account
             </h2>
-            <p class="mt-2 text-center text-lg text-gray-600">
-                Join thousands of hosts and travelers
-            </p>
         </div>
         
-        <form class="mt-8 space-y-6" method="POST" action="{{ route('register') }}">
+        <form class="mt-8 space-y-6" method="POST" action="{{ route('profile.update', $user) }}">
             @csrf
-            
+            @method('PATCH')
+
             <div class="space-y-4">
                 <div>
                     <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full name</label>
                     <input id="name" name="name" type="text" autocomplete="name" required 
                            class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent @error('name') border-red-500 @enderror"
-                           placeholder="John Doe" value="{{ old('name') }}">
+                           value="{{ $user->name }}">
                     @error('name')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
@@ -33,23 +31,30 @@
                     <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email address</label>
                     <input id="email" name="email" type="email" autocomplete="email" required 
                            class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent @error('email') border-red-500 @enderror"
-                           placeholder="john@example.com" value="{{ old('email') }}">
+                           value="{{ $user->email }}">
                     @error('email')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
 
                 <div>
-                    <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Select your account type</label>
-                    <select name="role" id="role" class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent">
-                        <option value="customer" @selected(old('role') == 'customer')>Customer</option>
-                        <option value="seller" @selected(old('role') == 'seller')>Seller</option>
-                    </select>
+                    @if ($user->role == 'admin')
+                        <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Select your account type</label>
+                        <select name="role" id="role" class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                            <option value="admin" @selected($user->role == 'admin')>Admin</option>
+                        </select>
+                    @else
+                        <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Select your account type</label>
+                        <select name="role" id="role" class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                            <option value="customer" @selected($user->role == 'customer')>Customer</option>
+                            <option value="seller" @selected($user->role == 'seller')>Seller</option>
+                        </select>
+                    @endif
                 </div>
                 
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-                    <input id="password" name="password" type="password" autocomplete="new-password" required 
+                    <input id="password" name="password" type="password" autocomplete="new-password" 
                            class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent @error('password') border-red-500 @enderror"
                            placeholder="At least 5 characters">
                     @error('password')
@@ -59,27 +64,19 @@
                 
                 <div>
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" required 
-                           class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" 
+                           class="w-full px-4 py-4 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-transparent  @error('password_confirmation') border-red-500 @enderror">
+                    @error('password_confirmation')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
             </div>
 
             <div>
                 <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-4 px-6 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center">
                     <i class="fas fa-user-plus mr-3"></i>
-                    Create account
+                    Update account
                 </button>
-            </div>
-
-            <div class="text-center">
-                <p class="text-sm text-gray-600">
-                    Already have an account? 
-                    <a href="{{ route('login') }}" class="font-bold text-orange-600 hover:text-orange-500">Sign in</a>
-                </p>
-                <p class="text-xs text-gray-500 mt-4">
-                    <i class="fas fa-shield-alt text-green-500 mr-1"></i>
-                    We care about your data. Read our <a href="#" class="text-orange-600 hover:underline">privacy policy</a>.
-                </p>
             </div>
         </form>
     </div>
