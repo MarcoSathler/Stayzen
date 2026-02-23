@@ -18,9 +18,8 @@
 </head>
 <body class="bg-gray-50">
     @include('components.header')
-    
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        @if (session('success'))
+
+    @if (session('success'))
             <div class="max-w-md mx-auto mb-4 p-4 bg-green-50 border border-green-200 rounded-lg shadow-sm">
                 <div class="flex items-start space-x-3">
                     <!-- Ícone opcional -->
@@ -52,7 +51,8 @@
                 </div>
             </div>
         @endif
-        
+    
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         @yield('content')
     </main>
     

@@ -12,7 +12,7 @@
             </h2>
         </div>
         
-        <form class="mt-8 space-y-6" method="POST" action="{{ route('profile.update', $user) }}">
+        <form class="mt-8 space-y-6" method="POST" action="{{ route('profile.update') }}">
             @csrf
             @method('PATCH')
 

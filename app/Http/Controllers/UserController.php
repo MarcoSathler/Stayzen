@@ -71,9 +71,11 @@ class UserController extends Controller
         
     }
 
-    public function update(StoreAuthRequest $request, User $user) 
+    public function update(StoreAuthRequest $request)
     {
         try{
+            $user = auth()->user();
+
             $validated = $request->validate([
                 'name' => 'required|string',
                 'email' => 'required|email',
@@ -81,9 +83,10 @@ class UserController extends Controller
                 'role' => 'required|string'
             ]);
 
-            if (isset($validated['password']))
-            {
+            if (isset($validated['password'])) {
                 $validated['password'] = $this->encrypt($validated['password']);
+            } else {
+                unset($validated['password']);
             }
 
             $user->update($validated);
