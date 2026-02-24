@@ -44,8 +44,9 @@
                 <span class="text-lg font-normal text-gray-500">/night</span>
             </div>
             <a href="{{ route('reservations.show', $listing) }}" 
-               class="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-sm">
-                Reserve
+                class="inline-flex items-center bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white px-6 py-2 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-200 text-sm group">
+                <span class="group-hover:hidden">Reserve</span>
+                <i class="fas fa-arrow-right ml-1 group-hover:translate-x-1 transition-transform"></i>
             </a>
         </div>
     </div>

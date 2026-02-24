@@ -6,14 +6,16 @@
     <div class="relative mb-8">
         <div class="grid grid-cols-2 lg:grid-cols-5 gap-2 rounded-3xl overflow-hidden shadow-2xl">
             <div class="lg:col-span-3">
-                <img src="{{ $accommodation->image_url }}" alt="{{ $accommodation->name }}" 
+                <img src="{{ $accommodation->serviceImage[0]->image_url }}" alt="{{ $accommodation->name }}" 
                      class="w-full h-96 object-cover">
             </div>
             <div class="lg:col-span-2 grid grid-cols-2 gap-2">
-                @for($i = 1; $i <= 4; $i++)
-                    <img src="{{ $accommodation->image_url }}" alt="Photo {{ $i }}" 
-                         class="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform cursor-pointer">
-                @endfor
+                @foreach ($accommodation->serviceImage as $i => $images)
+                    @if ($i != 0)
+                        <img src="{{ $images->image_url }}" alt="Photo {{ $i }}" 
+                            class="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform cursor-pointer">
+                    @endif
+                @endforeach
             </div>
         </div>
         
