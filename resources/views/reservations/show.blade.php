@@ -62,25 +62,6 @@
                 <h1 class="text-3xl font-black text-gray-900 mb-4">{{ $accommodation->name }}</h1>
                 <p class="text-lg text-gray-600 leading-relaxed">{{ $accommodation->description }}</p>
             </div>
-
-            <!-- Amenities -->
-            <div class="bg-white p-6 rounded-2xl shadow-sm">
-                <h3 class="text-xl font-bold text-gray-900 mb-6">Perfect for any stay</h3>
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-xl transition">
-                        <i class="fas fa-users text-orange-500 text-xl"></i>
-                        <span>{{ $accommodation->guests_max ?? 4 }} guests</span>
-                    </div>
-                    <div class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-xl transition">
-                        <i class="fas fa-bed text-orange-500 text-xl"></i>
-                        <span>{{ $accommodation->beds ?? 2 }} beds</span>
-                    </div>
-                    <div class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-xl transition">
-                        <i class="fas fa-bath text-orange-500 text-xl"></i>
-                        <span>{{ $accommodation->bathrooms ?? 1 }} bath</span>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Right Column - Booking -->

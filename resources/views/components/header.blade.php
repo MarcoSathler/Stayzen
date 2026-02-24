@@ -11,10 +11,19 @@
             <div class="flex items-center space-x-4">
                 @auth
                     <!-- Notifications -->
-                    <button class="p-2 relative text-gray-500 hover:text-gray-900 transition">
-                        <i class="fas fa-bell text-xl"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
-                    </button>
+                    <div class="relative inline-block">
+                        <a href="{{ route('notifications.index') }}" 
+                            class="p-2 text-gray-600 hover:text-orange-500 hover:bg-orange-50 rounded-2xl transition-all duration-200 flex items-center">
+                            <i class="fas fa-bell text-xl relative z-10"></i>
+                        </a>
+                        
+                        @if(auth()->user()->unread_notifications_count)
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg z-20 border-2 border-white animate-pulse">
+                                {{ auth()->user()->unread_notifications_count > 99 ? '99+' : auth()->user()->unread_notifications_count }}
+                            </span>
+                        @endif
+                    </div>
+
                     
                     <!-- Trips -->
                     <a href="{{ route('reservations.index') }}" class="p-2 text-gray-500 hover:text-gray-900">
