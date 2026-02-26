@@ -15,7 +15,10 @@ Route::get('/login', [UserController::class, 'loginPage'])->name('login');
 Route::post('/login', [UserController::class, 'login']);
 
 Route::middleware('auth')->group(function () {
-    Route::resource('reservations', ReservationController::class);
+    Route::post('/reservations/{accommodation}', [ReservationController::class, 'store'])->name('reservations.store');
+    Route::get('/reservations/{accommodation}', [ReservationController::class, 'show'])->name('reservations.show');
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+
     Route::get('/my-reservations', [ReservationController::class, 'myReservations'])->name('reservations.my');
     
     Route::get('/profile', [UserController::class, 'edit'])->name('profile.edit');
@@ -24,5 +27,4 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/read', [NotificationController::class, 'read'])->name('notifications.read');
-
 });
