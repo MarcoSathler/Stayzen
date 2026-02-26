@@ -17,6 +17,9 @@ Route::prefix('auth')->group(function () {
     });
 });
 
+Route::get('services', [ServiceController::class, 'index']);
+Route::get('services/{id}', [ServiceController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
     // Users (admin)
     Route::middleware('can:manage-users')->group(function () {
@@ -32,10 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('reservations/{id}', [ReservationController::class, 'show']);
     Route::patch('reservations/{id}', [ReservationController::class, 'update']);
     Route::delete('reservations/{id}', [ReservationController::class, 'destroy']);
-
-    // Services (opcional)
-    Route::get('services', [ServiceController::class, 'index']);
-    Route::get('services/{id}', [ServiceController::class, 'show']);
 
     Route::middleware('can:manage-services')->group(function () {
         Route::post('services', [ServiceController::class, 'store']);
