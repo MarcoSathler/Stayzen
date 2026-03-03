@@ -19,7 +19,7 @@ class ReservationController extends Controller
     public function show($id)
     {
         try {
-            $accommodation = Service::with(['userService', 'serviceImage'])->findOrFail($id);
+            $accommodation = Service::with(['userService', 'serviceImage', 'reservations'])->findOrFail($id);
 
             if (empty($accommodation)) {
                 throw new \Exception('Error on getting Accomodations');
@@ -41,12 +41,14 @@ class ReservationController extends Controller
     {
         try {
             $validated = $request->validated();
+            $checkIn = Carbon::parse($validated['check_in'])->timestamp;
+            $checkOut = Carbon::parse($validated['check_out'])->timestamp;
             
             Reservation::create([
                 'service_id' => $service_id,
                 'user_id' => auth()->id(),
-                'check_in' => Carbon::parse($validated['check_in'])->timestamp,
-                'check_out' => Carbon::parse($validated['check_out'])->timestamp,
+                'check_in' => $checkIn,
+                'check_out' => $checkOut,
             ]);
             
             return redirect()->route('reservations.show', $service_id)

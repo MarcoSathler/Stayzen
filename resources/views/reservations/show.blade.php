@@ -81,39 +81,63 @@
                     </div>
                 </div>
 
-                <!-- Dates & Guests -->
-                <form action="{{ route('reservations.store', $accommodation) }}" method="POST" class="space-y-4 mb-6">
-                    @csrf
+                @if (!empty($accommodation->reservations))
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Check-in</label>
                             <input type="date" name="check_in" required 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
-                                   min="{{ now()->format('Y-m-d') }}">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
+                                min="{{ now()->format('Y-m-d') }}"
+                                value="{{ $accommodation->reservations->check_in->format('Y-m-d')}}">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Check-out</label>
                             <input type="date" name="check_out" required 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                value="{{ $accommodation->reservations->check_out->format('Y-m-d')}}">
                         </div>
                     </div>
-
-                    <!-- Total Price (JS calculado) -->
                     <div class="bg-gray-50 p-4 rounded-xl">
                         <div class="flex justify-between text-lg font-semibold mb-2">
-                            <span>Total</span>
-                            <span id="total-price" class="text-2xl font-black text-gray-900">$<span>{{ $accommodation->price }}</span></span>
-                        </div>
-                        <div class="text-xs text-gray-500 text-right">
-                            Includes taxes and fees
+                            <span>Waiting Confirm</span>
                         </div>
                     </div>
+                @else
+                    <!-- Dates & Guests -->
+                    <form action="{{ route('reservations.store', $accommodation) }}" method="POST" class="space-y-4 mb-6">
+                        @csrf
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Check-in</label>
+                                <input type="date" name="check_in" required 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
+                                    min="{{ now()->format('Y-m-d') }}">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Check-out</label>
+                                <input type="date" name="check_out" required 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent">
+                            </div>
+                        </div>
 
-                    <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-4 px-6 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300">
-                        <i class="fas fa-calendar-check mr-2"></i>
-                        Reserve
-                    </button>
-                </form>
+                        <!-- Total Price (JS calculado) -->
+                        <div class="bg-gray-50 p-4 rounded-xl">
+                            <div class="flex justify-between text-lg font-semibold mb-2">
+                                <span>Total</span>
+                                <span id="total-price" class="text-2xl font-black text-gray-900">$<span>{{ $accommodation->price }}</span></span>
+                            </div>
+                            <div class="text-xs text-gray-500 text-right">
+                                Includes taxes and fees
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white py-4 px-6 rounded-2xl font-bold text-lg shadow-2xl hover:shadow-3xl transition-all duration-300">
+                            <i class="fas fa-calendar-check mr-2"></i>
+                            Reserve
+                        </button>
+                    </form>
+                @endif
+
 
                 <!-- Payment Methods -->
                 <div class="space-y-3">
