@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReservationRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Service;
 use App\Models\Reservation;
 use Carbon\Carbon;
@@ -63,5 +64,21 @@ class ReservationController extends Controller
                 'debug' => $ex->getMessage()
             ]);
         }
+    }
+
+    public function myReservations()
+    {
+        $user = Auth::user();
+
+        $reservations = Reservation::with('service')
+                                    ->where('user_id', $user->id)
+                                    ->orderByDesc('created_at')
+                                    ->get();
+
+        $pending   = $reservations->where('status', 'pending');
+        $confirmed = $reservations->where('status', 'confirmed');
+        $cancelled = $reservations->where('status', 'cancelled');
+
+        return view('reservations.my', compact('pending', 'confirmed', 'cancelled'));
     }
 } 
