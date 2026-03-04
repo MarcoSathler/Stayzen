@@ -28,7 +28,7 @@ class ReservationController extends Controller
 
             return view('reservations.show', compact('accommodation'));
         } catch (\Exception $ex) {
-            Log::error('Erro ao buscar serviços: ' . $ex->getMessage());
+            Log::error('Error fetching services: ' . $ex->getMessage());
 
             return view('errors.custom', [
                 'title' => 'Service Unavailable',
@@ -53,10 +53,10 @@ class ReservationController extends Controller
             ]);
             
             return redirect()->route('reservations.show', $service_id)
-                ->with('success', 'Reserva criada!');
+                ->with('success', 'Reservation created!');
 
         } catch (\Exception $ex) {
-            Log::error('Erro ao buscar serviços: ' . $ex->getMessage());
+            Log::error('Error fetching services: ' . $ex->getMessage());
 
             return view('errors.custom', [
                 'title' => 'Service Unavailable',

@@ -20,7 +20,7 @@ class NotificationController extends Controller
                 
             return view('notifications.index', compact('notifications'));
         } catch (\Exception $ex) {
-            Log::error('Erro ao buscar serviços: ' . $ex->getMessage());
+            Log::error('Error fetching services: ' . $ex->getMessage());
 
             return view('errors.custom', [
                 'title' => 'Service Unavailable',
@@ -39,9 +39,9 @@ class NotificationController extends Controller
 
             return redirect()
             ->back()
-            ->with('success', 'Readed all notifications');
+            ->with('success', 'Marked all as read');
         } catch (\Exception $ex) {
-            Log::error('Erro ao buscar serviços: ' . $ex->getMessage());
+            Log::error('Error fetching services: ' . $ex->getMessage());
 
             return view('errors.custom', [
                 'title' => 'Service Unavailable',

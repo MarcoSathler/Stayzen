@@ -120,7 +120,7 @@
                             </div>
                         </div>
 
-                        <!-- Total Price (JS calculado) -->
+                        <!-- Total Price (calculated via JS) -->
                         <div class="bg-gray-50 p-4 rounded-xl">
                             <div class="flex justify-between text-lg font-semibold mb-2">
                                 <span>Total</span>
