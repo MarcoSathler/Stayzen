@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Reservation extends Model
 {
@@ -28,8 +29,8 @@ class Reservation extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function service(): BelongsTo
+    public function service(): HasMany
     {
-        return $this->belongsTo(Service::class);
+        return $this->hasMany(Service::class);
     }
 }

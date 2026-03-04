@@ -81,20 +81,20 @@
                     </div>
                 </div>
 
-                @if (!empty($accommodation->reservations))
+                @if (!empty($accommodation->reservations[0]))
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Check-in</label>
                             <input type="date" name="check_in" required 
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent" 
                                 min="{{ now()->format('Y-m-d') }}"
-                                value="{{ $accommodation->reservations->check_in->format('Y-m-d')}}">
+                                value="{{ $accommodation->reservations[0]->check_in->format('Y-m-d')}}">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Check-out</label>
                             <input type="date" name="check_out" required 
                                 class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                                value="{{ $accommodation->reservations->check_out->format('Y-m-d')}}">
+                                value="{{ $accommodation->reservations[0]->check_out->format('Y-m-d')}}">
                         </div>
                     </div>
                     <div class="bg-gray-50 p-4 rounded-xl">
