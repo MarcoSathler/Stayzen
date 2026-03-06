@@ -1,43 +1,22 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\Service;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class HomeControllerTest extends TestCase
-{
-    use RefreshDatabase;
+test('home page returns successful response', function () {
+    Service::factory()->count(2)->create();
 
-    /**
-     * Testa se a página inicial retorna status 200.
-     */
-    public function test_index_returns_successful_response(): void
-    {
-        $response = $this->get(route('home'));
+    $response = $this->get('/');
 
-        $response->assertStatus(200);
-    }
+    $response->assertOk()
+             ->assertViewIs('reservations.index')
+             ->assertViewHas('accommodations');
+});
 
-    /**
-     * Testa se a view correta é retornada.
-     */
-    public function test_index_returns_correct_view(): void
-    {
-        $response = $this->get(route('home'));
+test('home page displays services', function () {
+    $service = Service::factory()->create(['name' => 'Beach Hotel']);
 
-        $response->assertViewIs('reservations.index');
-    }
+    $response = $this->get('/');
 
-    /**
-     * Testa se a variável 'accommodations' é passada para a view.
-     */
-    public function test_index_passes_accommodations_to_view(): void
-    {
-        $response = $this->get(route('home'));
-
-        $response->assertViewHas('accommodations');
-    }
-}
+    $response->assertOk()
+             ->assertSee('Beach Hotel');
+});
