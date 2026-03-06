@@ -26,7 +26,7 @@
 
                     
                     <!-- Trips -->
-                    <a href="{{ route('reservations.index') }}" class="p-2 text-gray-500 hover:text-gray-900">
+                    <a href="{{ route('reservations.my') }}" class="p-2 text-gray-500 hover:text-gray-900">
                         <i class="fas fa-briefcase text-xl"></i>
                     </a>
                     

@@ -9,18 +9,17 @@ class Reservation extends Model
 {
     protected $fillable = [
         'user_id',
-        'resource_id',
         'service_id',
         'status', // pending, confirmed, cancelled
-        'start_at',
-        'end_at',
+        'check_in',
+        'check_out',
         'cancelled_at',
         'notes',
     ];
 
     protected $casts = [
-        'start_at'     => 'datetime',
-        'end_at'       => 'datetime',
+        'check_in'     => 'datetime',
+        'check_out'       => 'datetime',
         'cancelled_at' => 'datetime',
     ];
 
@@ -29,13 +28,8 @@ class Reservation extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function resource(): BelongsTo
-    {
-        return $this->belongsTo(Resource::class);
-    }
-
     public function service(): BelongsTo
     {
-        return $this->belongsTo(Service::class);
+        return $this->BelongsTo(Service::class, 'service_id');
     }
 }
