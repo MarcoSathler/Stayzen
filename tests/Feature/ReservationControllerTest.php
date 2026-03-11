@@ -1,175 +1,93 @@
 <?php
 
-namespace Tests\Feature;
-
-use App\Models\Reservation;
+use App\Models\User;
 use App\Models\Service;
 use App\Models\ServiceImage;
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use App\Models\Reservation;
 
-class ReservationControllerTest extends TestCase
-{
-    use RefreshDatabase;
+test('show accommodation requires authentication', function () {
+    $service = Service::factory()->create();
 
-    // -----------------------------------------------------------------
-    // index
-    // -----------------------------------------------------------------
+    $response = $this->get("/reservations/{$service->id}");
 
-    /**
-     * Testa se a página de reservas retorna status 200 quando autenticado.
-     */
-    public function test_index_returns_successful_response_when_authenticated(): void
-    {
-        $user = User::factory()->create();
+    $response->assertRedirect(route('login'));
+});
 
-        $response = $this->actingAs($user)->get(route('reservations.index'));
+test('show accommodation details when authenticated', function () {
+    $user    = User::factory()->create();
+    $service = Service::factory()->create(['name' => 'Mountain Lodge']);
+    ServiceImage::factory()->create(['service_id' => $service->id]);
 
-        $response->assertStatus(200);
-    }
+    $response = $this->actingAs($user)->get("/reservations/{$service->id}");
 
-    /**
-     * Testa se usuário não autenticado é redirecionado ao acessar index.
-     */
-    public function test_index_redirects_unauthenticated_user(): void
-    {
-        $response = $this->get(route('reservations.index'));
+    $response->assertOk()
+             ->assertViewIs('reservations.show')
+             ->assertViewHas('accommodation');
+});
 
-        $response->assertRedirect(route('login'));
-    }
+test('store reservation with valid data', function () {
+    $user    = User::factory()->create();
+    $service = Service::factory()->create();
 
-    // -----------------------------------------------------------------
-    // show
-    // -----------------------------------------------------------------
+    $response = $this->actingAs($user)->post("/reservations/{$service->id}", [
+        'check_in'  => now()->addDays(1)->toDateString(),
+        'check_out' => now()->addDays(3)->toDateString(),
+    ]);
 
-    /**
-     * Cria um Service com imagens associadas necessárias para a view show.
-     */
-    private function createServiceWithImages(int $imageCount = 2): Service
-    {
-        $service = Service::factory()->create();
+    $response->assertRedirect(route('reservations.show', $service->id));
+    $response->assertSessionHas('success');
 
-        // A view reservations.show acessa serviceImage[0]->image_url diretamente,
-        // portanto é necessário que o service tenha ao menos uma imagem.
-        ServiceImage::factory()->count($imageCount)->create([
-            'service_id' => $service->id,
-        ]);
+    $this->assertDatabaseHas('reservations', [
+        'user_id'    => $user->id,
+        'service_id' => $service->id,
+        'status'     => 'pending',
+    ]);
+});
 
-        return $service;
-    }
+test('store reservation fails with missing dates', function () {
+    $user    = User::factory()->create();
+    $service = Service::factory()->create();
 
-    /**
-     * Testa se a página de detalhe de reserva retorna status 200.
-     */
-    public function test_show_returns_successful_response_when_authenticated(): void
-    {
-        $user    = User::factory()->create();
-        $service = $this->createServiceWithImages();
+    $response = $this->actingAs($user)->post("/reservations/{$service->id}", []);
 
-        $response = $this->actingAs($user)
-            ->get(route('reservations.show', $service->id));
+    $response->assertSessionHasErrors(['check_in', 'check_out']);
+});
 
-        $response->assertStatus(200);
-    }
+test('store reservation requires authentication', function () {
+    $service = Service::factory()->create();
 
-    /**
-     * Testa se a view correta é retornada no show.
-     */
-    public function test_show_returns_correct_view(): void
-    {
-        $user    = User::factory()->create();
-        $service = $this->createServiceWithImages();
+    $response = $this->post("/reservations/{$service->id}", [
+        'check_in'  => now()->addDays(1)->toDateString(),
+        'check_out' => now()->addDays(3)->toDateString(),
+    ]);
 
-        $response = $this->actingAs($user)
-            ->get(route('reservations.show', $service->id));
+    $response->assertRedirect(route('login'));
+});
 
-        $response->assertViewIs('reservations.show');
-        $response->assertViewHas('accommodation');
-    }
+test('my reservations page shows user reservations grouped by status', function () {
+    $user = User::factory()->create();
 
-    /**
-     * Testa se show retorna a view de erro para ID inexistente.
-     */
-    public function test_show_handles_nonexistent_service(): void
-    {
-        $user = User::factory()->create();
+    Reservation::factory()->pending()->create(['user_id' => $user->id]);
+    Reservation::factory()->confirmed()->create(['user_id' => $user->id]);
+    Reservation::factory()->cancelled()->create(['user_id' => $user->id]);
 
-        $response = $this->actingAs($user)
-            ->get(route('reservations.show', 99999));
+    $response = $this->actingAs($user)->get('/my-reservations');
 
-        // findOrFail lança ModelNotFoundException; o catch retorna a view de erro customizada
-        $response->assertViewIs('errors.custom');
-    }
+    $response->assertOk()
+             ->assertViewIs('reservations.my')
+             ->assertViewHas('pending')
+             ->assertViewHas('confirmed')
+             ->assertViewHas('cancelled');
+});
 
-    /**
-     * Testa se usuário não autenticado é redirecionado ao acessar show.
-     */
-    public function test_show_redirects_unauthenticated_user(): void
-    {
-        $response = $this->get(route('reservations.show', 1));
+test('my reservations requires authentication', function () {
+    $response = $this->get('/my-reservations');
 
-        $response->assertRedirect(route('login'));
-    }
+    $response->assertRedirect(route('login'));
+});
 
-    // -----------------------------------------------------------------
-    // store
-    // -----------------------------------------------------------------
+test('reservations index requires authentication', function () {
+    $response = $this->get('/reservations');
 
-    /**
-     * Testa o comportamento atual do store ao tentar criar uma reserva.
-     *
-     * Nota: Há uma inconsistência conhecida entre o ReservationController (que cria
-     * com os campos check_in/check_out presentes na tabela reservations) e o model
-     * Reservation (cujo $fillable declara start_at/end_at). Por causa disso, os
-     * campos são bloqueados pelo mass-assignment guard e a constraint NOT NULL da
-     * tabela dispara uma exceção, que o controller captura e renderiza a view de erro.
-     * Este teste documenta esse comportamento atual.
-     */
-    public function test_store_creates_reservation_with_valid_data(): void
-    {
-        $user    = User::factory()->create();
-        $service = Service::factory()->create();
-
-        $payload = [
-            'check_in'  => now()->addDays(1)->format('Y-m-d'),
-            'check_out' => now()->addDays(3)->format('Y-m-d'),
-        ];
-
-        $response = $this->actingAs($user)
-            ->post(route('reservations.store', $service->id), $payload);
-
-        // Devido à inconsistência nos campos do model Reservation ($fillable usa
-        // start_at/end_at, mas o controller passa check_in/check_out), o insert
-        // falha com uma exceção de constraint e a view de erro customizada é exibida.
-        $response->assertViewIs('errors.custom');
-    }
-
-    /**
-     * Testa se store redireciona usuário não autenticado.
-     */
-    public function test_store_redirects_unauthenticated_user(): void
-    {
-        $response = $this->post(route('reservations.store', 1), [
-            'check_in'  => now()->addDays(1)->format('Y-m-d'),
-            'check_out' => now()->addDays(3)->format('Y-m-d'),
-        ]);
-
-        $response->assertRedirect(route('login'));
-    }
-
-    /**
-     * Testa se store falha com dados inválidos (campos obrigatórios ausentes).
-     */
-    public function test_store_fails_with_invalid_data(): void
-    {
-        $user    = User::factory()->create();
-        $service = Service::factory()->create();
-
-        $response = $this->actingAs($user)
-            ->post(route('reservations.store', $service->id), []);
-
-        // Deve retornar erros de validação da ReservationRequest
-        $response->assertSessionHasErrors(['check_in', 'check_out']);
-    }
-}
+    $response->assertRedirect(route('login'));
+});

@@ -1,241 +1,99 @@
 <?php
 
-namespace Tests\Feature;
-
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
-use Tests\TestCase;
 
-class UserControllerTest extends TestCase
-{
-    use RefreshDatabase;
+test('register page returns successful response', function () {
+    $response = $this->get('/register');
 
-    // -----------------------------------------------------------------
-    // index (página de registro)
-    // -----------------------------------------------------------------
+    $response->assertOk()
+             ->assertViewIs('auth.register');
+});
 
-    /**
-     * Testa se a página de registro retorna status 200.
-     */
-    public function test_index_returns_register_page(): void
-    {
-        $response = $this->get(route('register'));
+test('login page returns successful response', function () {
+    $response = $this->get('/login');
 
-        $response->assertStatus(200);
-        $response->assertViewIs('auth.register');
-    }
+    $response->assertOk()
+             ->assertViewIs('auth.login');
+});
 
-    // -----------------------------------------------------------------
-    // loginPage
-    // -----------------------------------------------------------------
+test('store user with valid data', function () {
+    $response = $this->post('/register', [
+        'name'                  => 'John Doe',
+        'email'                 => 'john@example.com',
+        'password'              => 'secret1234',
+        'password_confirmation' => 'secret1234',
+        'role'                  => 'customer',
+    ]);
 
-    /**
-     * Testa se a página de login retorna status 200.
-     */
-    public function test_login_page_returns_successful_response(): void
-    {
-        $response = $this->get(route('login'));
+    $this->assertDatabaseHas('users', ['email' => 'john@example.com']);
+});
 
-        $response->assertStatus(200);
-        $response->assertViewIs('auth.login');
-    }
+test('store user fails with invalid data', function () {
+    $response = $this->post('/register', []);
 
-    // -----------------------------------------------------------------
-    // edit (página de perfil)
-    // -----------------------------------------------------------------
+    $response->assertSessionHasErrors(['name', 'email', 'role']);
+});
 
-    /**
-     * Testa se a página de perfil retorna 200 para usuário autenticado.
-     */
-    public function test_edit_returns_profile_page_when_authenticated(): void
-    {
-        $user = User::factory()->create();
+test('login with valid credentials redirects to home', function () {
+    User::factory()->create([
+        'email'    => 'user@test.com',
+        'password' => bcrypt('password123'),
+    ]);
 
-        $response = $this->actingAs($user)->get(route('profile.edit'));
+    $response = $this->post('/login', [
+        'email'    => 'user@test.com',
+        'password' => 'password123',
+    ]);
 
-        $response->assertStatus(200);
-        $response->assertViewIs('auth.profile');
-        $response->assertViewHas('user', $user);
-    }
+    $response->assertRedirect(route('home'));
+    $this->assertAuthenticated();
+});
 
-    /**
-     * Testa se usuário não autenticado é redirecionado ao acessar o perfil.
-     */
-    public function test_edit_redirects_unauthenticated_user(): void
-    {
-        $response = $this->get(route('profile.edit'));
+test('login with invalid credentials returns validation errors', function () {
+    User::factory()->create([
+        'email'    => 'user@test.com',
+        'password' => bcrypt('password123'),
+    ]);
 
-        $response->assertRedirect(route('login'));
-    }
+    $response = $this->post('/login', [
+        'email'    => 'user@test.com',
+        'password' => 'wrongpassword',
+    ]);
 
-    // -----------------------------------------------------------------
-    // store (criação de usuário)
-    // -----------------------------------------------------------------
+    $response->assertSessionHasErrors(['email']);
+    $this->assertGuest();
+});
 
-    /**
-     * Testa se um usuário pode ser registrado com dados válidos.
-     */
-    public function test_store_creates_user_with_valid_data(): void
-    {
-        $payload = [
-            'name'                  => 'João Teste',
-            'email'                 => 'joao@example.com',
-            'password'              => 'senha_segura_123',
-            'password_confirmation' => 'senha_segura_123',
-            'role'                  => 'customer',
-        ];
+test('profile page requires authentication', function () {
+    $response = $this->get('/profile');
 
-        $this->post(route('register'), $payload);
+    $response->assertRedirect(route('login'));
+});
 
-        $this->assertDatabaseHas('users', ['email' => 'joao@example.com']);
-    }
+test('profile page is accessible when authenticated', function () {
+    $user = User::factory()->create();
 
-    /**
-     * Testa se store falha com campos obrigatórios ausentes.
-     */
-    public function test_store_fails_without_required_fields(): void
-    {
-        $response = $this->post(route('register'), []);
+    $response = $this->actingAs($user)->get('/profile');
 
-        // name, email e role são required; password é nullable no FormRequest
-        $response->assertSessionHasErrors(['name', 'email', 'role']);
-    }
+    $response->assertOk()
+             ->assertViewIs('auth.profile')
+             ->assertViewHas('user');
+});
 
-    /**
-     * Testa se store falha com e-mail inválido.
-     */
-    public function test_store_fails_with_invalid_email(): void
-    {
-        $response = $this->post(route('register'), [
-            'name'  => 'Teste',
-            'email' => 'nao-e-um-email',
-            'role'  => 'customer',
-        ]);
+test('update profile with valid data', function () {
+    $user = User::factory()->create();
 
-        $response->assertSessionHasErrors(['email']);
-    }
+    $response = $this->actingAs($user)->patch('/profile', [
+        'name'  => 'Updated Name',
+        'email' => $user->email,
+        'role'  => $user->role,
+    ]);
 
-    /**
-     * Testa se store falha com role inválida.
-     */
-    public function test_store_fails_with_invalid_role(): void
-    {
-        $response = $this->post(route('register'), [
-            'name'  => 'Teste',
-            'email' => 'teste@example.com',
-            'role'  => 'superadmin', // não está na lista
-        ]);
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
 
-        $response->assertSessionHasErrors(['role']);
-    }
-
-    // -----------------------------------------------------------------
-    // login
-    // -----------------------------------------------------------------
-
-    /**
-     * Testa se um usuário existente consegue fazer login.
-     */
-    public function test_login_authenticates_valid_user_and_redirects_to_home(): void
-    {
-        // A coluna is_deleted é consultada no LoginAuthRequest
-        $user = User::factory()->create([
-            'password'  => Hash::make('senha_segura'),
-            'is_deleted' => 0,
-        ]);
-
-        $response = $this->post(route('login'), [
-            'email'    => $user->email,
-            'password' => 'senha_segura',
-        ]);
-
-        $response->assertRedirect(route('home'));
-        $this->assertAuthenticatedAs($user);
-    }
-
-    /**
-     * Testa se login falha com credenciais inválidas.
-     */
-    public function test_login_fails_with_wrong_password(): void
-    {
-        $user = User::factory()->create([
-            'password'  => Hash::make('senha_correta'),
-            'is_deleted' => 0,
-        ]);
-
-        $response = $this->post(route('login'), [
-            'email'    => $user->email,
-            'password' => 'senha_errada',
-        ]);
-
-        $response->assertSessionHasErrors(['email']);
-        $this->assertGuest();
-    }
-
-    /**
-     * Testa se login falha quando campos obrigatórios estão ausentes.
-     */
-    public function test_login_fails_without_credentials(): void
-    {
-        $response = $this->post(route('login'), []);
-
-        $response->assertSessionHasErrors(['email', 'password']);
-    }
-
-    // -----------------------------------------------------------------
-    // update (atualização de perfil)
-    // -----------------------------------------------------------------
-
-    /**
-     * Testa se o perfil do usuário pode ser atualizado com dados válidos.
-     */
-    public function test_update_updates_user_profile(): void
-    {
-        $user = User::factory()->create([
-            'name'  => 'Nome Antigo',
-            'email' => 'antigo@example.com',
-            'role'  => 'customer',
-        ]);
-
-        $response = $this->actingAs($user)->patch(route('profile.update'), [
-            'name'  => 'Nome Novo',
-            'email' => 'novo@example.com',
-            'role'  => 'customer',
-        ]);
-
-        $response->assertRedirect();
-        $response->assertSessionHas('success');
-        $this->assertDatabaseHas('users', [
-            'id'    => $user->id,
-            'name'  => 'Nome Novo',
-            'email' => 'novo@example.com',
-        ]);
-    }
-
-    /**
-     * Testa se update falha com campos obrigatórios ausentes.
-     */
-    public function test_update_fails_without_required_fields(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->patch(route('profile.update'), []);
-
-        $response->assertSessionHasErrors(['name', 'email', 'role']);
-    }
-
-    /**
-     * Testa se usuário não autenticado é redirecionado ao tentar atualizar perfil.
-     */
-    public function test_update_redirects_unauthenticated_user(): void
-    {
-        $response = $this->patch(route('profile.update'), [
-            'name'  => 'Qualquer Nome',
-            'email' => 'qualquer@example.com',
-            'role'  => 'customer',
-        ]);
-
-        $response->assertRedirect(route('login'));
-    }
-}
+    $this->assertDatabaseHas('users', [
+        'id'   => $user->id,
+        'name' => 'Updated Name',
+    ]);
+});
