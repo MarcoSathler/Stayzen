@@ -27,20 +27,67 @@
 
 <!-- Filters -->
 <section class="mb-16">
-    <div class="flex flex-wrap gap-4 justify-center lg:justify-start mb-8">
-        <button class="px-6 py-3 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-all font-medium">
-            All properties
-        </button>
-        <button class="px-6 py-3 bg-orange-500 text-white rounded-2xl hover:bg-orange-600 shadow-lg font-medium">
-            Apartments
-        </button>
-        <button class="px-6 py-3 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-all font-medium">
-            Hotels
-        </button>
-        <button class="px-6 py-3 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-all font-medium">
-            Hostels
-        </button>
-    </div>
+    <form
+        method="GET"
+        action="{{ route('home') }}"
+        class="flex flex-wrap items-center justify-center gap-4 lg:justify-between"
+    >
+        @foreach(request()->except('type') as $name => $value)
+            <input type="hidden" name="{{ $name }}" value="{{ $value }}">
+        @endforeach
+
+        <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                Property type
+            </span>
+        </div>
+
+        <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
+            @php
+                $currentType = request('type');
+            @endphp
+
+            <button
+                type="submit"
+                name="type"
+                value=""
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === null ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                All properties
+            </button>
+
+            <button
+                type="submit"
+                name="type"
+                value="apartment"
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === 'apartment' ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                Apartments
+            </button>
+
+            <button
+                type="submit"
+                name="type"
+                value="hotel"
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === 'hotel' ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                Hotels
+            </button>
+
+            <button
+                type="submit"
+                name="type"
+                value="hostel"
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === 'hostel' ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                Hostels
+            </button>
+        </div>
+    </form>
 </section>
 
 <!-- Listings Grid -->

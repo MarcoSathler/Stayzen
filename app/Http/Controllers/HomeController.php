@@ -12,10 +12,16 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         try {
+            $request->query->remove('page');
+
             $query = Service::query()
                     ->with(['userService', 'serviceImage'])
                     ->latest('created_at');
-        
+
+            if ($request->filled('type')) {
+                $query->where('type', $request->string('type'));
+            }
+                
             $accommodations = $query->paginate(12);
 
             if (empty($accommodations))
