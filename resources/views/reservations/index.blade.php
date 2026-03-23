@@ -11,36 +11,102 @@
             Book unique homes and experiences all over the world.
         </p>
         
-        <!-- Search Hero -->
-        <div class="bg-white rounded-3xl shadow-2xl p-1 max-w-5xl mx-auto">
-            <div class="flex flex-col lg:flex-row items-stretch lg:items-center p-1 lg:p-4 space-y-2 lg:space-y-0">
-                <div class="flex-1 flex lg:w-48">
-                    <input type="date" class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500 rounded-l-lg" placeholder="Check-in">
-                </div>
-                <div class="flex-1 flex lg:w-48">
-                    <input type="date" class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500" placeholder="Check-out">
+        <form
+            method="GET"
+            action="{{ route('home') }}"
+            class="flex flex-wrap items-center justify-center gap-4 lg:justify-between"
+        >
+
+        @php
+            $checkInFilter = request('date_check_in');
+            $checkOutFilter = request('date_check_out');
+        @endphp
+
+            <div class="bg-white rounded-3xl shadow-2xl p-1 max-w-5xl mx-auto">
+                <div class="flex flex-col lg:flex-row items-stretch lg:items-center p-1 lg:p-4 space-y-2 lg:space-y-0">
+                    <div class="flex-1 flex lg:w-48">
+                        <input type="date" name="date_check_in" required class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500 rounded-l-lg" placeholder="Check-in" value="{{ $checkInFilter == "" ? '' : $checkInFilter  }}">
+                    </div>
+                    <div class="flex-1 flex lg:w-48">
+                        <input type="date" name="date_check_out" required class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500" placeholder="Check-out" value="{{ $checkOutFilter == "" ? '' : $checkOutFilter  }}">
+                    </div>
+                    <button
+                    type="submit"
+                    name="type"
+                    value=""
+                    class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium bg-orange-500 text-white shadow-lg border-transparent"
+                    >
+                        Search
+                    </button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 
 <!-- Filters -->
 <section class="mb-16">
-    <div class="flex flex-wrap gap-4 justify-center lg:justify-start mb-8">
-        <button class="px-6 py-3 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-all font-medium">
-            All properties
-        </button>
-        <button class="px-6 py-3 bg-orange-500 text-white rounded-2xl hover:bg-orange-600 shadow-lg font-medium">
-            Apartments
-        </button>
-        <button class="px-6 py-3 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-all font-medium">
-            Hotels
-        </button>
-        <button class="px-6 py-3 bg-white border border-gray-200 rounded-2xl hover:shadow-md transition-all font-medium">
-            Hostels
-        </button>
-    </div>
+    <form
+        method="GET"
+        action="{{ route('home') }}"
+        class="flex flex-wrap items-center justify-center gap-4 lg:justify-between"
+    >
+        @foreach(request()->except('type') as $name => $value)
+            <input type="hidden" name="{{ $name }}" value="{{ $value }}">
+        @endforeach
+
+        <div class="flex items-center gap-2">
+            <span class="text-sm font-medium text-gray-500 uppercase tracking-wide">
+                Property type
+            </span>
+        </div>
+
+        <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
+            @php
+                $currentType = request('type');
+            @endphp
+
+            <button
+                type="submit"
+                name="type"
+                value=""
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === null ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                All properties
+            </button>
+
+            <button
+                type="submit"
+                name="type"
+                value="apartment"
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === 'apartment' ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                Apartments
+            </button>
+
+            <button
+                type="submit"
+                name="type"
+                value="hotel"
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === 'hotel' ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                Hotels
+            </button>
+
+            <button
+                type="submit"
+                name="type"
+                value="hostel"
+                class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium
+                    {{ $currentType === 'hostel' ? 'bg-orange-500 text-white shadow-lg border-transparent' : 'bg-white text-gray-700 border-gray-200 hover:shadow-md hover:border-gray-300' }}"
+            >
+                Hostels
+            </button>
+        </div>
+    </form>
 </section>
 
 <!-- Listings Grid -->
