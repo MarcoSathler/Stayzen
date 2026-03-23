@@ -11,17 +11,36 @@
             Book unique homes and experiences all over the world.
         </p>
         
-        <!-- Search Hero -->
-        <div class="bg-white rounded-3xl shadow-2xl p-1 max-w-5xl mx-auto">
-            <div class="flex flex-col lg:flex-row items-stretch lg:items-center p-1 lg:p-4 space-y-2 lg:space-y-0">
-                <div class="flex-1 flex lg:w-48">
-                    <input type="date" class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500 rounded-l-lg" placeholder="Check-in">
-                </div>
-                <div class="flex-1 flex lg:w-48">
-                    <input type="date" class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500" placeholder="Check-out">
+        <form
+            method="GET"
+            action="{{ route('home') }}"
+            class="flex flex-wrap items-center justify-center gap-4 lg:justify-between"
+        >
+
+        @php
+            $checkInFilter = request('date_check_in');
+            $checkOutFilter = request('date_check_out');
+        @endphp
+
+            <div class="bg-white rounded-3xl shadow-2xl p-1 max-w-5xl mx-auto">
+                <div class="flex flex-col lg:flex-row items-stretch lg:items-center p-1 lg:p-4 space-y-2 lg:space-y-0">
+                    <div class="flex-1 flex lg:w-48">
+                        <input type="date" name="date_check_in" required class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500 rounded-l-lg" placeholder="Check-in" value="{{ $checkInFilter == "" ? '' : $checkInFilter  }}">
+                    </div>
+                    <div class="flex-1 flex lg:w-48">
+                        <input type="date" name="date_check_out" required class="w-full px-6 py-4 text-lg border-none focus:ring-2 focus:ring-orange-500" placeholder="Check-out" value="{{ $checkOutFilter == "" ? '' : $checkOutFilter  }}">
+                    </div>
+                    <button
+                    type="submit"
+                    name="type"
+                    value=""
+                    class="px-5 py-2.5 text-sm rounded-2xl border transition-all font-medium bg-orange-500 text-white shadow-lg border-transparent"
+                    >
+                        Search
+                    </button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </section>
 
