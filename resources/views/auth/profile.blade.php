@@ -79,6 +79,13 @@
                 </button>
             </div>
         </form>
+        <form method="POST" action="{{ route('profile.logout') }}">
+            @csrf
+            <button type="submit" class="w-full bg-gray-100 hover:bg-red-500 hover:text-white text-gray-700 py-4 px-6 rounded-2xl font-bold text-lg shadow-md transition-all duration-300 flex items-center justify-center border border-gray-200">
+                <i class="fas fa-sign-out-alt mr-3"></i>
+                Logout
+            </button>
+        </form>
     </div>
 </div>
 @endsection
