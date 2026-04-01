@@ -70,15 +70,44 @@ class ReservationController extends Controller
     {
         $user = Auth::user();
 
-        $reservations = Reservation::with('service')
-                                    ->where('user_id', $user->id)
-                                    ->orderByDesc('created_at')
-                                    ->get();
+        if ($user->role === 'seller') {
+            $reservations = Reservation::with('service')
+                ->whereHas('service.userService', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
+                ->orderByDesc('created_at')
+                ->get();
+        } else {
+            $reservations = Reservation::with('service')
+                ->where('user_id', $user->id)
+                ->orderByDesc('created_at')
+                ->get();
+        }
 
         $pending   = $reservations->where('status', 'pending');
         $confirmed = $reservations->where('status', 'confirmed');
         $cancelled = $reservations->where('status', 'cancelled');
 
         return view('reservations.my', compact('pending', 'confirmed', 'cancelled'));
+    }
+
+    public function approve(ReservationRequest $service_id)
+    {
+        Reservation::update([
+            'service_id' => $service_id,
+            'status' => "confirmed",
+        ]);
+
+        $this->myReservations();
+    }
+
+    public function reject(ReservationRequest $service_id)
+    {
+        Reservation::update([
+            'service_id' => $service_id,
+            'status' => "cancelled",
+        ]);
+
+        $this->myReservations();
     }
 } 
