@@ -34,7 +34,7 @@
                                     {{ $reservation->service->name ?? 'Service removed' }}
                                 </p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $reservation->check_in }} → {{ $reservation->check_out }}
+                                    {{ $reservation->check_in->format('m/d/Y H:i') }} → {{ $reservation->check_out->format('m/d/Y H:i') }}
                                 </p>
                             </div>
 
@@ -85,7 +85,7 @@
                                     {{ $reservation->service->name ?? 'Service removed' }}
                                 </p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $reservation->check_in }} → {{ $reservation->check_out }}
+                                    {{ $reservation->check_in->format('m/d/Y H:i') }} → {{ $reservation->check_out->format('m/d/Y H:i') }}
                                 </p>
                             </div>
 
@@ -116,7 +116,7 @@
                                     {{ $reservation->service->name ?? 'Service removed' }}
                                 </p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $reservation->check_in }} → {{ $reservation->check_out }}
+                                    {{ $reservation->check_in->format('m/d/Y H:i') }} → {{ $reservation->check_out->format('m/d/Y H:i') }}
                                 </p>
                             </div>
 
@@ -143,7 +143,7 @@
                                     {{ $reservation->service->name ?? 'Service removed' }}
                                 </p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $reservation->check_in }} → {{ $reservation->check_out }}
+                                    {{ $reservation->check_in->format('m/d/Y H:i') }} → {{ $reservation->check_out->format('m/d/Y H:i') }}
                                 </p>
                             </div>
                             <span class="text-xs px-2 py-1 rounded-full bg-yellow-100 text-yellow-700">
@@ -167,7 +167,7 @@
                                     {{ $reservation->service->name ?? 'Service removed' }}
                                 </p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $reservation->check_in }} → {{ $reservation->check_out }}
+                                    {{ $reservation->check_in->format('m/d/Y H:i') }} → {{ $reservation->check_out->format('m/d/Y H:i') }}
                                 </p>
                             </div>
                             <span class="text-xs px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
@@ -191,7 +191,7 @@
                                     {{ $reservation->service->name ?? 'Service removed' }}
                                 </p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $reservation->check_in }} → {{ $reservation->check_out }}
+                                    {{ $reservation->check_in->format('m/d/Y H:i') }} → {{ $reservation->check_out->format('m/d/Y H:i') }}
                                 </p>
                             </div>
                             <span class="text-xs px-2 py-1 rounded-full bg-red-100 text-red-700">
