@@ -16,8 +16,8 @@ Route::post('/login', [UserController::class, 'login']);
 
 Route::middleware('auth')->group(function () {
     Route::post('/reservations/{accommodation}', [ReservationController::class, 'store'])->name('reservations.store');
-    Route::patch('/reservations/{reservation}/approve', [ReservationController::class, 'approve'])->name('reservations.approve');
 
+    Route::patch('/reservations/{reservation}/approve', [ReservationController::class, 'approve'])->name('reservations.approve');
     Route::patch('/reservations/{reservation}/reject', [ReservationController::class, 'reject'])->name('reservations.reject');
 
     Route::get('/reservations/{accommodation}', [ReservationController::class, 'show'])->name('reservations.show');

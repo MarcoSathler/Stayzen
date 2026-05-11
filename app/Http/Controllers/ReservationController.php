@@ -91,23 +91,23 @@ class ReservationController extends Controller
         return view('reservations.my', compact('pending', 'confirmed', 'cancelled'));
     }
 
-    public function approve(ReservationRequest $service_id)
+    public function approve($reservation_id)
     {
-        Reservation::update([
-            'service_id' => $service_id,
-            'status' => "confirmed",
+        $reservation = Reservation::findOrFail($reservation_id);
+        $reservation->update([
+            'status' => 'confirmed',
         ]);
 
-        $this->myReservations();
+        return redirect()->route('reservations.my');
     }
 
-    public function reject(ReservationRequest $service_id)
+    public function reject($reservation_id)
     {
-        Reservation::update([
-            'service_id' => $service_id,
-            'status' => "cancelled",
+        $reservation = Reservation::findOrFail($reservation_id);
+        $reservation->update([
+            'status' => 'cancelled',
         ]);
 
-        $this->myReservations();
+        return redirect()->route('reservations.my');
     }
 } 
