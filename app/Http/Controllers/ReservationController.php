@@ -42,8 +42,8 @@ class ReservationController extends Controller
     {
         try {
             $validated = $request->validated();
-            $checkIn = Carbon::parse($validated['check_in'])->timestamp;
-            $checkOut = Carbon::parse($validated['check_out'])->timestamp;
+            $checkIn = Carbon::parse($validated['check_in'])->startOfDay()->timestamp;
+            $checkOut = Carbon::parse($validated['check_out'])->endOfDay()->timestamp;
             
             Reservation::create([
                 'service_id' => $service_id,
